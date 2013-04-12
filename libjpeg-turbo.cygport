@@ -1,8 +1,8 @@
-inherit java
+#inherit java
 
 NAME="libjpeg-turbo"
 VERSION=1.2.1
-RELEASE=1
+RELEASE=2
 CATEGORY="Graphics"
 SUMMARY="JPEG library with SIMD acceleration"
 DESCRIPTION="libjpeg-turbo is a derivative of libjpeg that uses SIMD
@@ -12,8 +12,9 @@ libjpeg-turbo is generally 2-4x as fast as the unmodified version of
 libjpeg, all else being equal."
 HOMEPAGE="http://libjpeg-turbo.virtualgl.org/"
 SRC_URI="mirror://sourceforge/libjpeg-turbo/libjpeg-turbo-${VERSION}.tar.gz"
+PATCH_URI="01-w32api-INT32.patch"
 
-PKG_NAMES="jpeg libjpeg8 libjpeg-devel libturbojpeg libturbojpeg-devel java-turbojpeg javadoc-turbojpeg"
+PKG_NAMES="jpeg libjpeg8 libjpeg-devel libturbojpeg libturbojpeg-devel" # java-turbojpeg javadoc-turbojpeg"
 jpeg_CONTENTS="usr/bin/*.exe usr/share/doc/ usr/share/man/"
 libjpeg8_CONTENTS="usr/bin/cygjpeg-8.dll"
 libjpeg_devel_CONTENTS="--exclude=turbojpeg.h usr/include/ usr/lib/libjpeg.*"
@@ -23,17 +24,17 @@ java_turbojpeg_CONTENTS="${JAVA_DIR#/}"
 java_turbojpeg_REQUIRES="libturbojpeg"
 javadoc_turbojpeg_CONTENTS="${JAVADOC_DIR#/}"
 
-CYGCONF_ARGS="--with-java --with-jpeg8"
+CYGCONF_ARGS="--with-jpeg8" # --with-java
 MAKEOPTS+=" -j1"
 
 src_install() {
 	cd ${B}
 	cyginstall docdir=/usr/share/doc/${PN} exampledir=/usr/share/doc/${PN}
 
-	dodir ${JAVA_DIR}
-	mv ${D}/usr/classes/* ${D}${JAVA_DIR}
+#	dodir ${JAVA_DIR}
+#	mv ${D}/usr/classes/* ${D}${JAVA_DIR}
 
-	cygjavadoc -d ${D}${JAVADOC_DIR}/turbojpeg -sourcepath ${S}/java -subpackages org.libjpegturbo
+#	cygjavadoc -d ${D}${JAVADOC_DIR}/turbojpeg -sourcepath ${S}/java -subpackages org.libjpegturbo
 }
 
 KEEP_LA_FILES="none"
