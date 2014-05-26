@@ -1,0 +1,11 @@
+--- origsrc/libjpeg-turbo-1.3.1/java/org/libjpegturbo/turbojpeg/TJLoader.java.tmpl	2013-04-24 01:21:24.000000000 -0500
++++ src/libjpeg-turbo-1.3.1/java/org/libjpegturbo/turbojpeg/TJLoader.java.tmpl	2014-05-26 18:14:21.810877500 -0500
+@@ -40,6 +40,8 @@ final class TJLoader {
+         } catch (java.lang.UnsatisfiedLinkError e2) {
+           System.load("/usr/lib/libturbojpeg.jnilib");
+         }
++      } else if (os.indexOf("cygwin") >= 0) {
++        System.load("/usr/bin/cygturbojpeg-0.dll");
+       } else {
+         try {
+           System.load("%{__libdir}/libturbojpeg.so");
