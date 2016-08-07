@@ -1,7 +1,7 @@
 #inherit java
 
 NAME="libjpeg-turbo"
-VERSION=1.4.2
+VERSION=1.5.0
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="JPEG library with SIMD acceleration"
@@ -22,9 +22,17 @@ jpeg_CATEGORY="Graphics"
 jpeg_SUMMARY="JPEG utilities"
 jpeg_CONTENTS="usr/bin/*.exe usr/share/doc/ usr/share/man/"
 libjpeg8_CONTENTS="usr/bin/cygjpeg-8.dll"
-libjpeg_devel_CONTENTS="--exclude=turbojpeg.h usr/include/ usr/lib/libjpeg.*"
+libjpeg_devel_CONTENTS="
+	usr/include/j*.h
+	usr/lib/libjpeg.*
+	usr/lib/pkgconfig/libjpeg.pc
+"
 libturbojpeg0_CONTENTS="usr/bin/cygturbojpeg-0.dll"
-libturbojpeg_devel_CONTENTS="usr/include/turbojpeg.h usr/lib/libturbojpeg.*"
+libturbojpeg_devel_CONTENTS="
+	usr/include/turbojpeg.h
+	usr/lib/libturbojpeg.*
+	usr/lib/pkgconfig/libturbojpeg.pc
+"
 java_turbojpeg_CONTENTS="${JAVA_DIR#/}"
 java_turbojpeg_REQUIRES="libturbojpeg0"
 javadoc_turbojpeg_CONTENTS="${JAVADOC_DIR#/}"
@@ -42,4 +50,5 @@ src_install() {
 #	cygjavadoc -d ${D}${JAVADOC_DIR}/turbojpeg -sourcepath ${S}/java -subpackages org.libjpegturbo
 }
 
+DOCS="README.ijg"
 KEEP_LA_FILES="none"
