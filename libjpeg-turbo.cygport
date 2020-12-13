@@ -1,8 +1,11 @@
-#inherit java
+inherit cmake ninja #java
 
+################################
 NAME="libjpeg-turbo"
-VERSION=1.5.3
+VERSION=2.0.6
 RELEASE=1
+
+################################
 CATEGORY="Libs"
 SUMMARY="JPEG library with SIMD acceleration"
 DESCRIPTION="libjpeg-turbo is a derivative of libjpeg that uses SIMD
@@ -10,45 +13,186 @@ instructions (MMX, SSE2, NEON) to accelerate baseline JPEG compression
 and decompression on x86, x86-64, and ARM systems.  On such systems,
 libjpeg-turbo is generally 2-4x as fast as the unmodified version of
 libjpeg, all else being equal."
-HOMEPAGE="http://libjpeg-turbo.virtualgl.org/"
-SRC_URI="mirror://sourceforge/libjpeg-turbo/libjpeg-turbo-${VERSION}.tar.gz"
-PATCH_URI="
-	http://pkgs.fedoraproject.org/cgit/libjpeg-turbo.git/plain/libjpeg-turbo14-noinst.patch
-	http://pkgs.fedoraproject.org/cgit/libjpeg-turbo.git/plain/libjpeg-turbo-header-files.patch
+HOMEPAGE="https://libjpeg-turbo.org/"
+
+################################
+#SRC_URI="mirror://sourceforge/libjpeg-turbo/libjpeg-turbo-${VERSION}.tar.gz"
+#PATCH_URI="
+#	https://src.fedoraproject.org/rpms/libjpeg-turbo/raw/f28/f/libjpeg-turbo14-noinst.patch
+#	https://src.fedoraproject.org/rpms/libjpeg-turbo/raw/f28/f/libjpeg-turbo-header-files.patch
+#"
+
+################################
+## Source from a git repository
+################################
+GIT_REPO="https://github.com/libjpeg-turbo/libjpeg-turbo"
+declare -A GIT_DATEHASH_BY_NAME=(
+  # git log -1 --date=iso-strict --format='%cd/%H'
+  [2.0.90p8]=2020-12-08T21:25:47-06:00/1388ad67574d3488870c8b45c22069b6c268abe2
+  [2.0.90]=2020-11-24T21:56:19-06:00/4e52b66f342a803d3b8099b79607e3158d3a241c
+  [2.0.6]=2020-11-16T17:38:06-06:00/10ba6ed3365615ed5c2995fe2d240cb2d5000173
+)
+REV_HASH="${GIT_DATEHASH_BY_NAME[${VERSION}]#*/}"
+REV_DATE="${GIT_DATEHASH_BY_NAME[${VERSION}]%/*}"
+REV_DATE_SHORT="${GIT_DATEHASH_BY_NAME[${VERSION}]%T*}"
+GIT_BASENAME="${GIT_REPO##*/}"
+SRC_URI="${GIT_REPO}/archive/${REV_HASH}.tar.gz"   # GitHub
+#SRC_URI="${GIT_REPO}/-/archive/${REV_HASH}/${GIT_BASENAME}-${REV_HASH}.tar.bz2" # GitLab
+SRC_DIR="${GIT_BASENAME}-${REV_HASH}"
+
+################################
+## Patch files
+################################
+# Patch filenames are in a default style of 'git format-patch'
+PATCH_URI=$(\
+  find -maxdepth 1 -type f -name '[0-9][0-9][0-9][0-9]-*.patch' \
+  | sort \
+)
+# Additional patches, if any
+PATCH_URI+="
 "
 
-PKG_NAMES="jpeg libjpeg8 libjpeg-devel libturbojpeg0 libturbojpeg-devel" # java-turbojpeg javadoc-turbojpeg"
-jpeg_CATEGORY="Graphics"
-jpeg_SUMMARY="JPEG utilities"
-jpeg_CONTENTS="usr/bin/*.exe usr/share/doc/ usr/share/man/"
-libjpeg8_CONTENTS="usr/bin/cygjpeg-8.dll"
-libjpeg_devel_CONTENTS="
-	usr/include/j*.h
-	usr/lib/libjpeg.*
-	usr/lib/pkgconfig/libjpeg.pc
+################################
+## Requirements for building
+################################
+BUILD_REQUIRES="\
+  cmake\
+  ninja\
+  nasm\
 "
-libturbojpeg0_CONTENTS="usr/bin/cygturbojpeg-0.dll"
-libturbojpeg_devel_CONTENTS="
-	usr/include/turbojpeg.h
-	usr/lib/libturbojpeg.*
-	usr/lib/pkgconfig/libturbojpeg.pc
+
+################################
+## ABI
+################################
+ABI=
+
+################################
+## Settings for CMake
+################################
+CYGCMAKE_ARGS="\
+  -DCYGWIN:BOOL=ON
+  -DBUILD_SHARED_LIBS:BOOL=ON
 "
-java_turbojpeg_CONTENTS="${JAVA_DIR#/}"
-java_turbojpeg_REQUIRES="libturbojpeg0"
-javadoc_turbojpeg_CONTENTS="${JAVADOC_DIR#/}"
+CYGCMAKE_ARGS+="\
+  -DENABLE_SHARED:BOOL=ON
+  -DENABLE_STATIC:BOOL=OFF
+  -DWITH_12BIT:BOOL=OFF
+  -DWITH_JPEG8:BOOL=ON
+  -DWITH_SIMD:BOOL=ON
+  -DWITH_TURBOJPEG:BOOL=ON
+  -DWITH_JPEGINT_H:BOOL=ON
+"
 
-CYGCONF_ARGS="--with-jpeg8" # --with-java
-MAKEOPTS+=" -j1"
+################################
+## Contents of our packages
+################################
+#PKG_NAMES="jpeg libjpeg8 libjpeg-devel libturbojpeg0 libturbojpeg-devel" # java-turbojpeg javadoc-turbojpeg"
 
-src_install() {
-	cd ${B}
-	cyginstall docdir=/usr/share/doc/${PN} exampledir=/usr/share/doc/${PN}
+## package
+#THIS_PN="${NAME}"
+#THIS_VN=${THIS_PN//[-+\.]/_}
+#PKG_NAMES+=" ${THIS_PN}"
 
-#	dodir ${JAVA_DIR}
-#	mv ${D}/usr/classes/* ${D}${JAVA_DIR}
+#printf -v "${THIS_VN}_CATEGORY" "%s" ""
+#printf -v "${THIS_VN}_SUMMARY"  "%s" ""
+#printf -v "${THIS_VN}_CONTENTS" "%s" "\
+#"
 
-#	cygjavadoc -d ${D}${JAVADOC_DIR}/turbojpeg -sourcepath ${S}/java -subpackages org.libjpegturbo
+################################
+THIS_PN="jpeg"
+THIS_VN=${THIS_PN//[-+\.]/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+printf -v "${THIS_VN}_CATEGORY" "%s" "Graphics"
+printf -v "${THIS_VN}_SUMMARY"  "%s" "JPEG utilities"
+printf -v "${THIS_VN}_CONTENTS" "%s" "\
+  usr/bin/*.exe\
+  usr/share/doc/\
+  usr/share/man/\
+"
+
+################################
+THIS_PN="libjpeg8"
+THIS_VN=${THIS_PN//[-+\.]/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+#printf -v "${THIS_VN}_CATEGORY" "%s" "${CATEGORY}"
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY} (runtime)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "usr/bin/cygjpeg-8.dll"
+
+################################
+THIS_PN="libjpeg-devel"
+THIS_VN=${THIS_PN//[-+\.]/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+#printf -v "${THIS_VN}_CATEGORY" "%s" "${CATEGORY}"
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY} (devel)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "\
+  usr/include/j*.h
+  usr/lib/libjpeg.*
+  usr/lib/pkgconfig/libjpeg.pc
+"
+
+################################
+THIS_PN="libturbojpeg0"
+THIS_VN=${THIS_PN//[-+\.]/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+#printf -v "${THIS_VN}_CATEGORY" "%s" "${CATEGORY}"
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY} (runtime)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "usr/bin/cygturbojpeg-0.dll"
+
+################################
+THIS_PN="libturbojpeg-devel"
+THIS_VN=${THIS_PN//[-+\.]/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+#printf -v "${THIS_VN}_CATEGORY" "%s" "${CATEGORY}"
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY} (devel)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "\
+  usr/include/turbojpeg.h
+  usr/lib/libturbojpeg.*
+  usr/lib/pkgconfig/libturbojpeg.pc
+"
+
+################################
+THIS_PN="java-turbojpeg"
+THIS_VN=${THIS_PN//[-+\.]/_}
+#PKG_NAMES+=" ${THIS_PN}"
+
+#printf -v "${THIS_VN}_CATEGORY" "%s" "${CATEGORY}"
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY} (Java bindings)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "${JAVA_DIR#/}"
+printf -v "${THIS_VN}_REQUIRES" "%s" "libturbojpeg0"
+
+################################
+THIS_PN="javadoc-turbojpeg"
+THIS_VN=${THIS_PN//[-+\.]/_}
+#PKG_NAMES+=" ${THIS_PN}"
+
+#printf -v "${THIS_VN}_CATEGORY" "%s" "${CATEGORY}"
+#printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY}"
+printf -v "${THIS_VN}_CONTENTS" "%s" "${JAVADOC_DIR#/}"
+
+################################
+
+#CYGCONF_ARGS="--with-jpeg8" # --with-java
+#MAKEOPTS+=" -j1"
+
+#src_install() {
+#	cd ${B}
+#	cyginstall docdir=/usr/share/doc/${PN} exampledir=/usr/share/doc/${PN}
+
+##	dodir ${JAVA_DIR}
+##	mv ${D}/usr/classes/* ${D}${JAVA_DIR}
+
+##	cygjavadoc -d ${D}${JAVADOC_DIR}/turbojpeg -sourcepath ${S}/java -subpackages org.libjpegturbo
+#}
+
+################################
+src_test() {
+  cd ${B}
+  ctest
 }
 
-DOCS="README.ijg"
-KEEP_LA_FILES="none"
+################################
