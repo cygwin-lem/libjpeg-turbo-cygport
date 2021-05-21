@@ -2,7 +2,7 @@ inherit cmake ninja #java
 
 ################################
 NAME="libjpeg-turbo"
-VERSION=2.0.6
+VERSION=2.1.0
 RELEASE=1
 
 ################################
@@ -28,15 +28,14 @@ HOMEPAGE="https://libjpeg-turbo.org/"
 GIT_REPO="https://github.com/libjpeg-turbo/libjpeg-turbo"
 declare -A GIT_DATEHASH_BY_NAME=(
   # git log -1 --date=iso-strict --format='%cd/%H'
-  [2.0.90p8]=2020-12-08T21:25:47-06:00/1388ad67574d3488870c8b45c22069b6c268abe2
-  [2.0.90]=2020-11-24T21:56:19-06:00/4e52b66f342a803d3b8099b79607e3158d3a241c
-  [2.0.6]=2020-11-16T17:38:06-06:00/10ba6ed3365615ed5c2995fe2d240cb2d5000173
+  [2.1.0]=2021-04-23T13:29:40-05:00/2.1.0
+  [2.0.6]=2020-11-16T17:38:06-06:00/2.0.6
 )
 REV_HASH="${GIT_DATEHASH_BY_NAME[${VERSION}]#*/}"
 REV_DATE="${GIT_DATEHASH_BY_NAME[${VERSION}]%/*}"
 REV_DATE_SHORT="${GIT_DATEHASH_BY_NAME[${VERSION}]%T*}"
 GIT_BASENAME="${GIT_REPO##*/}"
-SRC_URI="${GIT_REPO}/archive/${REV_HASH}.tar.gz"   # GitHub
+SRC_URI="${GIT_REPO}/archive/${REV_HASH}/${GIT_BASENAME}-${VERSION}.tar.gz" # GitHub
 #SRC_URI="${GIT_REPO}/-/archive/${REV_HASH}/${GIT_BASENAME}-${REV_HASH}.tar.bz2" # GitLab
 SRC_DIR="${GIT_BASENAME}-${REV_HASH}"
 
@@ -153,6 +152,7 @@ printf -v "${THIS_VN}_CONTENTS" "%s" "\
   usr/include/turbojpeg.h
   usr/lib/libturbojpeg.*
   usr/lib/pkgconfig/libturbojpeg.pc
+  usr/lib/cmake/
 "
 
 ################################
