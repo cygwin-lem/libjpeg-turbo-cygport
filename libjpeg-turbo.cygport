@@ -15,6 +15,12 @@ libjpeg-turbo is generally 2-4x as fast as the unmodified version of
 libjpeg, all else being equal."
 HOMEPAGE="https://libjpeg-turbo.org/"
 
+LICENSE="IJG AND BSD-3-Clause AND Zlib"
+# cf. https://www.cygwin.com/packaging-hint-files.html#pvr-src.hint
+#     https://spdx.org/licenses/IJG.html
+#     https://spdx.org/licenses/BSD-3-Clause.html
+#     https://spdx.org/licenses/Zlib.html
+
 ################################
 #SRC_URI="mirror://sourceforge/libjpeg-turbo/libjpeg-turbo-${VERSION}.tar.gz"
 #PATCH_URI="
