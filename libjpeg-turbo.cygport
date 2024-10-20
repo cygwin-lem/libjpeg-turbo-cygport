@@ -2,7 +2,7 @@ inherit cmake ninja #java
 
 ################################
 NAME="libjpeg-turbo"
-VERSION=3.0.3
+VERSION=3.0.4
 RELEASE=1
 
 ################################
@@ -34,6 +34,7 @@ LICENSE="IJG AND BSD-3-Clause AND Zlib"
 GIT_REPO="https://github.com/libjpeg-turbo/libjpeg-turbo"
 declare -A GIT_DATEHASH_BY_NAME=(
   # git log -1 --date=iso-strict --format='%cd/%H'
+  [3.0.4]=2024-09-14T11:10:59-04:00/f29eda648547b36aa594c4116c7764a6c8a079b9/3.0.4
   [3.0.3]=2024-05-06T18:24:15-04:00/3.0.3
   [3.0.2]=2024-01-23T17:35:53-05:00/3.0.2
   [3.0.1]=2023-10-11T16:11:45-04:00/3.0.1
@@ -48,8 +49,8 @@ declare -A GIT_DATEHASH_BY_NAME=(
   [2.1.0]=2021-04-23T13:29:40-05:00/2.1.0
   [2.0.6]=2020-11-16T17:38:06-06:00/2.0.6
 )
-REV_HASH="${GIT_DATEHASH_BY_NAME[${VERSION}]#*/}"
-REV_DATE="${GIT_DATEHASH_BY_NAME[${VERSION}]%/*}"
+REV_HASH="${GIT_DATEHASH_BY_NAME[${VERSION}]##*/}"
+REV_DATE="${GIT_DATEHASH_BY_NAME[${VERSION}]%%/*}"
 REV_DATE_SHORT="${GIT_DATEHASH_BY_NAME[${VERSION}]%T*}"
 GIT_BASENAME="${GIT_REPO##*/}"
 SRC_URI="${GIT_REPO}/archive/${REV_HASH}/${GIT_BASENAME}-${VERSION}.tar.gz" # GitHub
