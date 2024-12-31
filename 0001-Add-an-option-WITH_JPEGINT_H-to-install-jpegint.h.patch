@@ -1,6 +1,6 @@
---- origsrc/libjpeg-turbo-2.1.0/CMakeLists.txt	2021-04-24 03:29:40.000000000 +0900
-+++ src/libjpeg-turbo-2.1.0/CMakeLists.txt
-@@ -206,6 +206,9 @@
+--- origsrc/libjpeg-turbo-3.1.0/CMakeLists.txt	2024-12-13 05:46:51.000000000 +0900
++++ src/libjpeg-turbo-3.1.0/CMakeLists.txt
+@@ -271,6 +271,9 @@ if(WITH_JAVA)
    set(ENABLE_SHARED 1)
  endif()
  
@@ -10,13 +10,13 @@
  # Explicitly setting CMAKE_POSITION_INDEPENDENT_CODE=FALSE disables PIC for all
  # targets, which will cause the shared library builds to fail.  Thus, if shared
  # libraries are enabled and CMAKE_POSITION_INDEPENDENT_CODE is explicitly set
-@@ -1516,6 +1519,12 @@
-   ${CMAKE_CURRENT_SOURCE_DIR}/jpeglib.h
-   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+@@ -2069,6 +2072,12 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR
+   ${CMAKE_CURRENT_SOURCE_DIR}/src/jpeglib.h
+   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT include)
  
 +if(WITH_JPEGINT_H)
 +  install(FILES
-+    ${CMAKE_CURRENT_SOURCE_DIR}/jpegint.h
++    ${CMAKE_CURRENT_SOURCE_DIR}/src/jpegint.h
 +    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 +endif()
 +
