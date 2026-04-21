@@ -2,7 +2,7 @@ inherit cmake ninja #java
 
 ################################
 NAME="libjpeg-turbo"
-VERSION=3.1.3
+VERSION=3.1.4
 RELEASE=1
 
 ################################
@@ -34,6 +34,7 @@ LICENSE="IJG AND BSD-3-Clause AND Zlib"
 GIT_REPO="https://github.com/libjpeg-turbo/libjpeg-turbo"
 declare -A GIT_DATEHASH_BY_NAME=(
   # git log -1 --date=iso-strict --format='%cd/%H'
+  [3.1.4]=2026-03-26T15:34:19-04:00/e352b02f794f701407b39af08576035ba3360d60/3.1.4
   [3.1.3]=2025-12-10T10:09:10-05:00/af9c1c268520a29adf98cad5138dafe612b3d318/3.1.3
   [3.1.2]=2025-08-26T21:11:07-04:00/4e151a4ad91001b3aa8c2ece2205c15f487ce320/3.1.2
   [3.1.1]=2025-06-06T14:50:51-04:00/7723f50f3f66b9da74376e6d8badb6162464212c/3.1.1
